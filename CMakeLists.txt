@@ -118,6 +118,8 @@ if(PULSE_FOUND)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_ENABLE_PULSE")
   set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -D_ENABLE_PULSE")
 endif()
+find_package(cpprestsdk REQUIRED)
+set(DYNAMIC_LIBRARIES ${DYNAMIC_LIBRARIES} cpprestsdk::cpprest)
 
 ########################################################################
 # Setup target
