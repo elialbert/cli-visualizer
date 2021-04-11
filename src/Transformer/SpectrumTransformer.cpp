@@ -31,6 +31,7 @@ using namespace web::websockets::client;
 namespace
 {
 const size_t k_secs_for_autoscaling = 30;
+
 const double k_autoscaling_reset_window_percent = 0.10;
 const double k_autoscaling_erase_percent_on_reset = 0.75;
 const double k_deviation_amount_to_reset =
@@ -63,6 +64,7 @@ vis::SpectrumTransformer::SpectrumTransformer(
         fftw_malloc(sizeof(fftw_complex) * m_fftw_results));
     m_fftw_output_right = static_cast<fftw_complex *>(
         fftw_malloc(sizeof(fftw_complex) * m_fftw_results));
+
 }
 
 bool vis::SpectrumTransformer::prepare_fft_input(pcm_stereo_sample *buffer,
@@ -200,14 +202,15 @@ void vis::SpectrumTransformer::execute(pcm_stereo_sample *buffer,
   std::copy(m_bars_left.begin(), m_bars_left.end(), std::ostream_iterator<double>(output, " "));
 
 
-try {
-  websocket_client client;
-  client.connect("ws://192.168.1.21:8484").wait();
+// try {
+
+ websocket_client client;
+client.connect("ws://192.168.1.21:8484").wait();
   websocket_outgoing_message out_msg;
   out_msg.set_utf8_message(output.str());
   client.send(out_msg);
-} catch (const websocket_exception& e) {
-}
+// } catch (const websocket_exception& e) {
+// }
   // std::cout << output.str() << std::endl;
 
         draw_bars(m_bars_left, m_bars_falloff_left, max_bar_height, true,
