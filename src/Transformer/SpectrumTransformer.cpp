@@ -198,12 +198,16 @@ void vis::SpectrumTransformer::execute(pcm_stereo_sample *buffer,
 
   std::stringstream output;
   std::copy(m_bars_left.begin(), m_bars_left.end(), std::ostream_iterator<double>(output, " "));
-websocket_client client;
-  client.connect("ws://192.168.1.21:8484").wait();
 
+
+try {
+  websocket_client client;
+  client.connect("ws://192.168.1.21:8484").wait();
   websocket_outgoing_message out_msg;
   out_msg.set_utf8_message(output.str());
   client.send(out_msg);
+} catch (const websocket_exception& e) {
+}
   // std::cout << output.str() << std::endl;
 
         draw_bars(m_bars_left, m_bars_falloff_left, max_bar_height, true,
