@@ -15,6 +15,12 @@
 #include "Writer/NcursesWriter.h"
 #include <fftw3.h>
 
+#include <cpprest/ws_client.h>
+
+using namespace web;
+using namespace web::websockets::client;
+
+
 namespace vis
 {
 
@@ -63,6 +69,9 @@ class SpectrumTransformer : public GenericTransformer
 
     fftw_plan m_fftw_plan_left;
     fftw_plan m_fftw_plan_right;
+
+        websocket_client client;
+  websocket_outgoing_message out_msg;
     /** --- END --- fft calculations vars **/
 
     /** --- BEGIN --- frequency cutoff calculations vars **/

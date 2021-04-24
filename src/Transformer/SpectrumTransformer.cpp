@@ -64,7 +64,7 @@ vis::SpectrumTransformer::SpectrumTransformer(
         fftw_malloc(sizeof(fftw_complex) * m_fftw_results));
     m_fftw_output_right = static_cast<fftw_complex *>(
         fftw_malloc(sizeof(fftw_complex) * m_fftw_results));
-
+client.connect("ws://192.168.1.21:8484").wait();
 }
 
 bool vis::SpectrumTransformer::prepare_fft_input(pcm_stereo_sample *buffer,
@@ -204,11 +204,13 @@ void vis::SpectrumTransformer::execute(pcm_stereo_sample *buffer,
 
 // try {
 
- websocket_client client;
-client.connect("ws://192.168.1.21:8484").wait();
-  websocket_outgoing_message out_msg;
+//  websocket_client client;
+// client.connect("ws://192.168.1.21:8484").wait();
+  // websocket_outgoing_message out_msg;
   out_msg.set_utf8_message(output.str());
-  client.send(out_msg);
+  client.send(out_msg).wait();
+// VIS_LOG(vis::LogLevel::ERROR, "test",
+//                 VisConstants::k_silent_sleep_milliseconds);
 // } catch (const websocket_exception& e) {
 // }
   // std::cout << output.str() << std::endl;
@@ -233,6 +235,9 @@ client.connect("ws://192.168.1.21:8484").wait();
                 VisConstants::k_silent_sleep_milliseconds);
         std::this_thread::sleep_for(std::chrono::milliseconds(
             VisConstants::k_silent_sleep_milliseconds));
+            // client.close().wait();
+
+            // client.connect("ws://192.168.1.21:8484").wait();
     }
 }
 
