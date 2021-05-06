@@ -37,7 +37,7 @@ const double k_autoscaling_erase_percent_on_reset = 0.75;
 const double k_deviation_amount_to_reset =
     1.0; // amount of deviation needed between short term and long term moving
          // max height averages to trigger an auto scaling reset
-
+int clientcounter;
 const double k_minimum_bar_height = 0.125;
 const uint64_t k_max_silent_runs_before_sleep =
     3000ul / VisConstants::k_silent_sleep_milliseconds; // silent for 3 seconds
@@ -65,6 +65,7 @@ vis::SpectrumTransformer::SpectrumTransformer(
     m_fftw_output_right = static_cast<fftw_complex *>(
         fftw_malloc(sizeof(fftw_complex) * m_fftw_results));
 client.connect("ws://192.168.1.21:8484").wait();
+clientcounter = 0;
 }
 
 bool vis::SpectrumTransformer::prepare_fft_input(pcm_stereo_sample *buffer,
@@ -201,19 +202,13 @@ void vis::SpectrumTransformer::execute(pcm_stereo_sample *buffer,
   std::stringstream output;
   std::copy(m_bars_left.begin(), m_bars_left.end(), std::ostream_iterator<double>(output, " "));
 
-
-// try {
-
-//  websocket_client client;
-// client.connect("ws://192.168.1.21:8484").wait();
-  // websocket_outgoing_message out_msg;
+if (clientcounter == 1) {
   out_msg.set_utf8_message(output.str());
   client.send(out_msg).wait();
-// VIS_LOG(vis::LogLevel::ERROR, "test",
-//                 VisConstants::k_silent_sleep_milliseconds);
-// } catch (const websocket_exception& e) {
-// }
-  // std::cout << output.str() << std::endl;
+    clientcounter = 0;
+} else {
+    clientcounter += 1;
+}
 
         draw_bars(m_bars_left, m_bars_falloff_left, max_bar_height, true,
                   bar_row_msg, writer);
